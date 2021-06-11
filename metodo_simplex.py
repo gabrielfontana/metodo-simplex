@@ -303,8 +303,8 @@ def terceiro_passo(qtd_variaveis_decisao, qtd_restricoes, modo_opcao, matriz_coe
         resultado_otimo = multiplicar_matrizes(finalizando, b)
         print(f'\nResultado ótimo = {resultado_otimo[0]}')
 
-        # if qtd_variaveis_decisao >= 0 and qtd_variaveis_decisao <= 2:
-        #     solucao_grafica(A, b, resultado_otimo)
+        if qtd_variaveis_decisao >= 0 and qtd_variaveis_decisao <= 2:
+            solucao_grafica(A, b, resultado_otimo)
 
     else:
         menor_valor_passo3 = 1000000
@@ -353,7 +353,13 @@ def terceiro_passo(qtd_variaveis_decisao, qtd_restricoes, modo_opcao, matriz_coe
 
         terceiro_passo(qtd_variaveis_decisao, qtd_restricoes, modo_opcao, C, A, b, nova_XB, nova_matriz_aux, B, coluna_pivot_passo3, indice_entrada_passo3, indice_saida_passo3, CB)
     
-# def solucao_grafica(matriz_coeficientes_restricoes, matriz_termos_independentes_restricoes, resultado_otimo):
-#     return
+def solucao_grafica(matriz_coeficientes_restricoes, matriz_termos_independentes_restricoes, resultado_otimo):
+    for i in range(len(matriz_coeficientes_restricoes)):
+        ponto_x = matriz_termos_independentes_restricoes[i][0] / matriz_coeficientes_restricoes[i][0]
+        ponto_y = matriz_termos_independentes_restricoes[i][0] / matriz_coeficientes_restricoes[i][1]
+        plt.plot([ponto_x, 0], [0, ponto_y])
+    plt.xlabel('x1')
+    plt.ylabel('x2')
+    plt.show()
 
 menu()
