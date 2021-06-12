@@ -359,7 +359,7 @@ def solucao_grafica(matriz_coeficientes_restricoes, matriz_termos_independentes_
             ponto_x = matriz_termos_independentes_restricoes[i][0] / matriz_coeficientes_restricoes[i][0]
             ponto_y = matriz_termos_independentes_restricoes[i][0] / matriz_coeficientes_restricoes[i][1]
             plt.plot([ponto_x, 0], [0, ponto_y])
-            plt.plot([solucao_metodo_simplex[0][0]], [solucao_metodo_simplex[1][0]], 'bo')         
+            plt.plot([solucao_metodo_simplex[0][0]], [solucao_metodo_simplex[1][0]], 'bo')
     plt.xlabel('x1')
     plt.ylabel('x2')
     plt.show()
