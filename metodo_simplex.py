@@ -303,7 +303,7 @@ def terceiro_passo(qtd_variaveis_decisao, qtd_restricoes, modo_opcao, matriz_coe
         resultado_otimo = multiplicar_matrizes(finalizando, b)
         print(f'\nResultado ótimo = {resultado_otimo[0]}')
 
-        if qtd_variaveis_decisao >= 0 and qtd_variaveis_decisao <= 2:
+        if qtd_variaveis_decisao == 2:
             solucao_grafica(A, b, solucao_metodo_simplex)
 
     else:
@@ -359,6 +359,15 @@ def solucao_grafica(matriz_coeficientes_restricoes, matriz_termos_independentes_
             ponto_x = matriz_termos_independentes_restricoes[i][0] / matriz_coeficientes_restricoes[i][0]
             ponto_y = matriz_termos_independentes_restricoes[i][0] / matriz_coeficientes_restricoes[i][1]
             plt.plot([ponto_x, 0], [0, ponto_y])
+            plt.plot([solucao_metodo_simplex[0][0]], [solucao_metodo_simplex[1][0]], 'bo')
+        
+        if matriz_coeficientes_restricoes[i][0] == 0 or matriz_coeficientes_restricoes[i][1] == 0:
+            if matriz_coeficientes_restricoes[i][1] == 0:
+                ponto_x = matriz_termos_independentes_restricoes[i][0] / matriz_coeficientes_restricoes[i][0]
+                plt.axvline(x = ponto_x)
+            elif matriz_coeficientes_restricoes[i][0] == 0:
+                ponto_y = matriz_termos_independentes_restricoes[i][0] / matriz_coeficientes_restricoes[i][1]
+                plt.axhline(y = ponto_y)
             plt.plot([solucao_metodo_simplex[0][0]], [solucao_metodo_simplex[1][0]], 'bo')
     plt.xlabel('x1')
     plt.ylabel('x2')
