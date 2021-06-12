@@ -355,11 +355,11 @@ def terceiro_passo(qtd_variaveis_decisao, qtd_restricoes, modo_opcao, matriz_coe
     
 def solucao_grafica(matriz_coeficientes_restricoes, matriz_termos_independentes_restricoes, resultado_otimo):
     for i in range(len(matriz_coeficientes_restricoes)):
-        ponto_x = matriz_termos_independentes_restricoes[i][0] / matriz_coeficientes_restricoes[i][0]
-        ponto_y = matriz_termos_independentes_restricoes[i][0] / matriz_coeficientes_restricoes[i][1]
-        plt.plot([ponto_x, 0], [0, ponto_y])
+        if matriz_coeficientes_restricoes[i][0] != 0 and matriz_coeficientes_restricoes[i][1] != 0:
+            ponto_x = matriz_termos_independentes_restricoes[i][0] / matriz_coeficientes_restricoes[i][0]
+            ponto_y = matriz_termos_independentes_restricoes[i][0] / matriz_coeficientes_restricoes[i][1]
+            plt.plot([ponto_x, 0], [0, ponto_y])
     plt.xlabel('x1')
     plt.ylabel('x2')
     plt.show()
-
 menu()
