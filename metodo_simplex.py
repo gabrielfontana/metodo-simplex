@@ -372,4 +372,5 @@ def solucao_grafica(matriz_coeficientes_restricoes, matriz_termos_independentes_
     plt.xlabel('X1')
     plt.ylabel('X2')
     plt.show()
+
 menu()
