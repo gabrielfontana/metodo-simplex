@@ -240,6 +240,7 @@ def segundo_passo(qtd_variaveis_decisao, qtd_restricoes, modo_opcao, funcao_obje
             menor_valor = C_negativo[0][i]
             indice_entrada = i
     
+    #Qual incógnita sai da base? 
     #Coluna Pivot do Passo 2
     coluna_pivot = coluna(matriz_coeficientes_restricoes_identidade, indice_entrada)
     coluna_pivot = matriz_transposta([coluna_pivot])
@@ -282,6 +283,7 @@ def segundo_passo(qtd_variaveis_decisao, qtd_restricoes, modo_opcao, funcao_obje
     #Chamando a função do Passo 3 do Método Simplex e passando os parâmetros
     terceiro_passo(qtd_variaveis_decisao, qtd_restricoes, modo_opcao, C, A, b, XB, matrix_aux, B, coluna_pivot, indice_entrada, indice_saida, matriz_coeficientes_novas_variaveis_base)
 
+#Função para multiplicar duas matrizes
 def multiplicar_matrizes(matriz1, matriz2):
     if len(matriz1[0]) != len(matriz2):
         print('\nDimensões incorretas. O número de colunas da matriz A precisa ser igual ao número de linhas da matriz B')
@@ -296,6 +298,7 @@ def multiplicar_matrizes(matriz1, matriz2):
                     matrizes_multiplicacao[i][j] += matriz1[i][k] * matriz2[k][j]
         return matrizes_multiplicacao
 
+#Função para subtrair duas matrizes
 def subtrair_matrizes(matriz1, matriz2):
     matriz_subtracao = []
     for i in range(len(matriz1)):
@@ -312,24 +315,31 @@ def terceiro_passo(qtd_variaveis_decisao, qtd_restricoes, modo_opcao, matriz_coe
     A = matriz_coeficientes_restricoes
     b = matriz_termos_independentes_restricoes
 
+    #Nova matriz das variáveis de base
     nova_XB = matriz_variaveis_base
     nova_XB[indice_saida][0] = 'X' + str(indice_entrada+1)
+    #Nova matriz auxiliar
     nova_matriz_aux = aux_matrix
     nova_matriz_aux[indice_saida][0] = indice_entrada
     
+    #Nova matriz dos coeficientes das variáveis da base
     B = matriz_identidade
     for i in range(len(coluna_pivot)):
         B[i][indice_saida] = coluna_pivot[i][0]
 
+    #Matriz inversa da matriz B.
     B_inversa = np.linalg.inv(B)
 
+    #Matriz dos coeficientes das novas variáveis da base vindos da função objetivo
     CB = matriz_coeficientes_novas_variaveis_base
     CB[0][indice_saida] = C[0][indice_entrada]
 
+    #Calcula-se
     calculo1 = multiplicar_matrizes(CB, B_inversa)
     calculo2 = multiplicar_matrizes(calculo1, A)
     resultado = subtrair_matrizes(calculo2, C)
 
+    #Exibição específica (somente para o modo completo)
     if modo_opcao == 2:
         print('\nPASSO 3')
         print('\nNova matriz das variáveis de base (XB):')
@@ -347,6 +357,8 @@ def terceiro_passo(qtd_variaveis_decisao, qtd_restricoes, modo_opcao, matriz_coe
         print('\nCálculo -> CB * B_inversa * A - C:')
         exibir_matriz(resultado)
 
+    #Verificar se todos os elementos da matriz resultado são maiores ou iguais a 0
+    #Finalização do Simplex
     if np.all(np.array(resultado) >= 0):
         solucao_inicial = multiplicar_matrizes(B_inversa, b)
 
@@ -366,10 +378,12 @@ def terceiro_passo(qtd_variaveis_decisao, qtd_restricoes, modo_opcao, matriz_coe
         resultado_otimo = multiplicar_matrizes(finalizando, b)
         print(f'\nResultado ótimo = {resultado_otimo[0]}')
 
+        #Exibir a solução gráfica somente se a quantidade de variáveis de decisão for igual a 2
         if qtd_variaveis_decisao == 2:
             solucao_grafica(A, b, solucao_metodo_simplex)
-
+    #Se não
     else:
+        #Qual incógnita entra na base?
         menor_valor_passo3 = 1000000000000
         indice_entrada_passo3 = 0
         for i in range(len(resultado[0])):
@@ -377,13 +391,16 @@ def terceiro_passo(qtd_variaveis_decisao, qtd_restricoes, modo_opcao, matriz_coe
                 menor_valor_passo3 = resultado[0][i]
                 indice_entrada_passo3 = i
         
+        #Qual incógnita sai da base? 
+        #Coluna Pivot do Passo 3
         matriz_pivot_passo3 = multiplicar_matrizes(B_inversa, A)
-
         coluna_pivot_passo3 = coluna(matriz_pivot_passo3, indice_entrada_passo3)
         coluna_pivot_passo3 = matriz_transposta([coluna_pivot_passo3])
 
+        #Lado Direito do Passo 3
         matriz_lado_direito_passo3 = multiplicar_matrizes(B_inversa, b)
 
+        #Cálculo do Passo 3 (quem irá sair)
         menor_valor_calculo_passo3 = 1000000000000
         indice_saida_passo3 = 0
         for i in range(len(coluna_pivot_passo3)):
@@ -393,6 +410,7 @@ def terceiro_passo(qtd_variaveis_decisao, qtd_restricoes, modo_opcao, matriz_coe
                     menor_valor_calculo_passo3 = divisao
                     indice_saida_passo3 = i
 
+        #Exibição específica (somente para o modo completo)
         if modo_opcao == 2:
             print('\nQual incógnita entra na base?')
             print(f'Menor valor da matriz resultante do cálculo: {menor_valor_passo3}')
@@ -400,7 +418,6 @@ def terceiro_passo(qtd_variaveis_decisao, qtd_restricoes, modo_opcao, matriz_coe
 
             print('\nMatriz proveniente da multiplicação de B_inversa com A:')
             exibir_matriz(matriz_pivot_passo3)
-
             print('\nColuna pivot do passo 3:')
             exibir_matriz(coluna_pivot_passo3)
 
@@ -413,16 +430,21 @@ def terceiro_passo(qtd_variaveis_decisao, qtd_restricoes, modo_opcao, matriz_coe
             print(f'Menor valor do cálculo: {menor_valor_calculo_passo3}')
             print(f'Quem irá sair: S{indice_saida_passo3+1}')
 
+        #Repetir o Passo 3 do Método Simplex até que todos os elementos da matriz resultado sejam maiores ou iguais a 0
         terceiro_passo(qtd_variaveis_decisao, qtd_restricoes, modo_opcao, C, A, b, nova_XB, nova_matriz_aux, B, coluna_pivot_passo3, indice_entrada_passo3, indice_saida_passo3, CB)
-    
+
+#Função que cria a solução gráfica do Método Simplex (funciona somente nos problemas com duas variáveis de decisão)
 def solucao_grafica(matriz_coeficientes_restricoes, matriz_termos_independentes_restricoes, solucao_metodo_simplex):
+    #Encontra os pontos no gráfico
     for i in range(len(matriz_coeficientes_restricoes)):
+        #Maneira de encontrar os pontos no gráfico se não houver nenhum coeficiente de restrição igual a 0
         if matriz_coeficientes_restricoes[i][0] != 0 and matriz_coeficientes_restricoes[i][1] != 0:
             ponto_x = matriz_termos_independentes_restricoes[i][0] / matriz_coeficientes_restricoes[i][0]
             ponto_y = matriz_termos_independentes_restricoes[i][0] / matriz_coeficientes_restricoes[i][1]
             plt.plot([ponto_x, 0], [0, ponto_y])
             plt.plot([solucao_metodo_simplex[0][0]], [solucao_metodo_simplex[1][0]], 'bo')
         
+        #Maneira de encontrar os pontos no gráfico se houver algum coeficiente de restrição igual a 0 (função contínua)
         if matriz_coeficientes_restricoes[i][0] == 0 or matriz_coeficientes_restricoes[i][1] == 0:
             if matriz_coeficientes_restricoes[i][1] == 0:
                 ponto_x = matriz_termos_independentes_restricoes[i][0] / matriz_coeficientes_restricoes[i][0]
@@ -432,8 +454,12 @@ def solucao_grafica(matriz_coeficientes_restricoes, matriz_termos_independentes_
                 plt.axhline(y = ponto_y)
             plt.plot([solucao_metodo_simplex[0][0]], [solucao_metodo_simplex[1][0]], 'bo')
 
+    #Nomeia os eixos do gráfico
     plt.xlabel('X1')
     plt.ylabel('X2')
+
+    #Exibe o gráfico
     plt.show()
 
+#Chama a função menu()
 menu()
