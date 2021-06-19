@@ -1,6 +1,12 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
+def exibir_matriz(matriz):
+    for i in range(len(matriz)):
+        for j in range(len(matriz[0])):
+            print(f'[{matriz[i][j]:^5}]', end='')
+        print()
+
 def restringir_caracter(mensagem):
     invalido = True
     while invalido:
@@ -11,12 +17,6 @@ def restringir_caracter(mensagem):
         except:
             print('Informe um dígito válido!')
     return verificacao 
-
-def exibir_matriz(matriz):
-    for i in range(len(matriz)):
-        for j in range(len(matriz[0])):
-            print(f'[{matriz[i][j]:^5}]', end='')
-        print()
 
 def matriz_coeficientes_funcao_objetivo(qtd_variaveis_decisao):
     coeficientes_funcao_objetivo = [[]]
@@ -73,6 +73,7 @@ def menu():
         print('[1] - Modo Simplificado')
         print('[2] - Modo Completo')
         modo_opcao = int(restringir_caracter('Informe um modo: '))
+
         if modo_opcao == 1 or modo_opcao == 2:
             break
         else:
@@ -83,8 +84,11 @@ def menu():
         print('[1] - Maximizar')
         print('[2] - Minimizar')
         funcao_objetivo_opcao = int(restringir_caracter('Opção: '))
-        if funcao_objetivo_opcao == 1 or funcao_objetivo_opcao == 2:
+
+        if funcao_objetivo_opcao == 1:
             break
+        elif funcao_objetivo_opcao == 2:
+            print('Função a ser desenvolvida...')
         else:
             print('\nInforme uma opção válida!')
     
@@ -94,24 +98,33 @@ def primeiro_passo(qtd_variaveis_decisao, qtd_restricoes, modo_opcao, funcao_obj
     print('\nPASSO 1')
     
     C = matriz_coeficientes_funcao_objetivo(qtd_variaveis_decisao)
+
     X = matriz_transposta_incognitas(qtd_variaveis_decisao)
+
     A = matriz_coeficientes_restricoes(qtd_restricoes, qtd_variaveis_decisao)
+    
     b = matriz_termos_independentes_restricoes(qtd_restricoes)
+
     I = matriz_identidade(qtd_restricoes)
+    
     A_I = matriz_coeficientes_restricoes_identidade(A, I)
 
     print('\nMatriz dos coeficientes da função objetivo (C):')
     exibir_matriz(C)
+
     print('\nMatriz transposta das incógnitas (X):')
     exibir_matriz(X)
+
     print('\nMatriz dos coeficientes das restrições (A):')
     exibir_matriz(A)
+
     print('\nMatriz dos termos independentes das restrições (b):')
     exibir_matriz(b)
 
     if modo_opcao == 2:
         print('\nMatriz identidade (I):')
         exibir_matriz(I)
+
         print('\nMatriz dos coeficientes das restrições (A) + Matriz identidade (I):')
         exibir_matriz(A_I)
 
@@ -155,6 +168,7 @@ def matriz_transposta(matriz):
     return matriz_transposta
 
 def segundo_passo(qtd_variaveis_decisao, qtd_restricoes, modo_opcao, funcao_objetivo_opcao, matriz_coeficientes_funcao_objetivo, matriz_transposta_incognitas, matriz_coeficientes_restricoes, matriz_termos_independentes_restricoes, matriz_identidade, matriz_coeficientes_restricoes_identidade):
+
     qtd_variaveis_decisao = qtd_variaveis_decisao
     qtd_restricoes = qtd_restricoes
     C = matriz_coeficientes_funcao_objetivo
@@ -168,37 +182,29 @@ def segundo_passo(qtd_variaveis_decisao, qtd_restricoes, modo_opcao, funcao_obje
 
     if modo_opcao == 2:
         print('\nPASSO 2')
+
         print('\nMatriz das variáveis de base (XB):')
         exibir_matriz(XB)
+
         print('\nMatriz dos coeficientes das variáveis de base (B):')
         exibir_matriz(B)
+
         print('\nMatriz dos coeficientes negativos da função objetivo (-C):')
         exibir_matriz(C_negativo)
 
-    menor_valor = 1000000
+    menor_valor = 1000000000000
     indice_entrada = 0
     for i in range(len(C_negativo[0])):
         if C_negativo[0][i] < menor_valor:
             menor_valor = C_negativo[0][i]
             indice_entrada = i
-    if modo_opcao == 2:
-        print('\nQual incógnita entra na base?')
-        print(f'Menor valor da matriz dos coeficientes negativos da função objetivo: {menor_valor}')
-        print(f'Incógnita que entrará na base: X{indice_entrada+1}')
-
+    
     coluna_pivot = coluna(matriz_coeficientes_restricoes_identidade, indice_entrada)
     coluna_pivot = matriz_transposta([coluna_pivot])
-    if modo_opcao == 2:
-        print('\nQual incógnita sai da base?')
-        print('Coluna pivot:')
-        exibir_matriz(coluna_pivot)
-    
-    lado_direito = matriz_termos_independentes_restricoes
-    if modo_opcao == 2:
-        print('\nLado direito:')
-        exibir_matriz(lado_direito)
 
-    menor_valor_calculo = 1000000
+    lado_direito = matriz_termos_independentes_restricoes
+
+    menor_valor_calculo = 1000000000000
     indice_saida = 0
     for i in range(len(coluna_pivot)):
         if coluna_pivot[i][0] != 0:
@@ -206,7 +212,19 @@ def segundo_passo(qtd_variaveis_decisao, qtd_restricoes, modo_opcao, funcao_obje
             if divisao < menor_valor_calculo:
                 menor_valor_calculo = divisao
                 indice_saida = i
+
     if modo_opcao == 2:
+        print('\nQual incógnita entra na base?')
+        print(f'Menor valor da matriz dos coeficientes negativos da função objetivo: {menor_valor}')
+        print(f'Incógnita que entrará na base: X{indice_entrada+1}')
+
+        print('\nQual incógnita sai da base?')
+        print('Coluna pivot:')
+        exibir_matriz(coluna_pivot)
+
+        print('\nLado direito:')
+        exibir_matriz(lado_direito)
+
         print('\nCálculo:')
         print(f'Menor valor do cálculo: {menor_valor_calculo}')
         print(f'Quem irá sair: S{indice_saida+1}')
@@ -240,47 +258,44 @@ def subtrair_matrizes(matriz1, matriz2):
             matriz_subtracao[i].append(subtracao)
     return matriz_subtracao
 
-def checar_maior_que_zero(list1):
-    return (all(x > 0 for x in list1))
-
 def terceiro_passo(qtd_variaveis_decisao, qtd_restricoes, modo_opcao, matriz_coeficientes_funcao_objetivo, matriz_coeficientes_restricoes, matriz_termos_independentes_restricoes, matriz_variaveis_base, aux_matrix, matriz_identidade, coluna_pivot, indice_entrada, indice_saida, matriz_coeficientes_novas_variaveis_base):
-    
+
     C = matriz_coeficientes_funcao_objetivo
     A = matriz_coeficientes_restricoes
     b = matriz_termos_independentes_restricoes
 
     nova_XB = matriz_variaveis_base
     nova_XB[indice_saida][0] = 'X' + str(indice_entrada+1)
+    nova_matriz_aux = aux_matrix
+    nova_matriz_aux[indice_saida][0] = indice_entrada
+    
+    B = matriz_identidade
+    for i in range(len(coluna_pivot)):
+        B[i][indice_saida] = coluna_pivot[i][0]
+
+    B_inversa = np.linalg.inv(B)
+
+    CB = matriz_coeficientes_novas_variaveis_base
+    CB[0][indice_saida] = C[0][indice_entrada]
+
+    calculo1 = multiplicar_matrizes(CB, B_inversa)
+    calculo2 = multiplicar_matrizes(calculo1, A)
+    resultado = subtrair_matrizes(calculo2, C)
+
     if modo_opcao == 2:
         print('\nPASSO 3')
         print('\nNova matriz das variáveis de base (XB):')
         exibir_matriz(nova_XB)
 
-    nova_matriz_aux = aux_matrix
-    nova_matriz_aux[indice_saida][0] = indice_entrada
-
-    B = matriz_identidade
-    for i in range(len(coluna_pivot)):
-        B[i][indice_saida] = coluna_pivot[i][0]
-    if modo_opcao == 2:
         print('\nNova matriz dos coeficientes das variáveis de base (B):')
         exibir_matriz(B)
 
-    B_inversa = np.linalg.inv(B)
-    if modo_opcao == 2:
         print('\nMatriz inversa da matriz B: ')
         exibir_matriz(B_inversa)
 
-    CB = matriz_coeficientes_novas_variaveis_base
-    CB[0][indice_saida] = C[0][indice_entrada]
-    if modo_opcao == 2:
         print('\nMatriz dos coeficientes das novas variaveis da base vindos da função objetivo (CB): ')
         exibir_matriz(CB)
-    
-    calculo1 = multiplicar_matrizes(CB, B_inversa)
-    calculo2 = multiplicar_matrizes(calculo1, A)
-    resultado = subtrair_matrizes(calculo2, C)
-    if modo_opcao == 2:
+
         print('\nCálculo -> CB * B_inversa * A - C:')
         exibir_matriz(resultado)
 
@@ -307,38 +322,21 @@ def terceiro_passo(qtd_variaveis_decisao, qtd_restricoes, modo_opcao, matriz_coe
             solucao_grafica(A, b, solucao_metodo_simplex)
 
     else:
-        menor_valor_passo3 = 1000000
+        menor_valor_passo3 = 1000000000000
         indice_entrada_passo3 = 0
         for i in range(len(resultado[0])):
             if resultado[0][i] < menor_valor_passo3:
                 menor_valor_passo3 = resultado[0][i]
                 indice_entrada_passo3 = i
-        if modo_opcao == 2:
-            print('\nQual incógnita entra na base?')
-            print(f'Menor valor da matriz resultante do cálculo: {menor_valor_passo3}')
-            print(f'Incógnita que entrará na base: X{indice_entrada_passo3+1}')
-
+        
         matriz_pivot_passo3 = multiplicar_matrizes(B_inversa, A)
-        if modo_opcao == 2:
-            print('\nMatriz proveniente da multiplicação de B_inversa com A:')
-            exibir_matriz(matriz_pivot_passo3)
 
         coluna_pivot_passo3 = coluna(matriz_pivot_passo3, indice_entrada_passo3)
         coluna_pivot_passo3 = matriz_transposta([coluna_pivot_passo3])
-        if modo_opcao == 2:
-            print('\nColuna pivot do passo 3:')
-            exibir_matriz(coluna_pivot_passo3)
 
         matriz_lado_direito_passo3 = multiplicar_matrizes(B_inversa, b)
-        if modo_opcao == 2:
-            print('\nMatriz proveniente da multiplicação de B_inversa com b:')
-            exibir_matriz(matriz_lado_direito_passo3)
 
-        if modo_opcao == 2:
-            print('\nLado direito do passo 3:')
-            exibir_matriz(matriz_lado_direito_passo3)
-
-        menor_valor_calculo_passo3 = 1000000
+        menor_valor_calculo_passo3 = 1000000000000
         indice_saida_passo3 = 0
         for i in range(len(coluna_pivot_passo3)):
             if coluna_pivot_passo3[i][0] != 0:
@@ -346,7 +344,23 @@ def terceiro_passo(qtd_variaveis_decisao, qtd_restricoes, modo_opcao, matriz_coe
                 if divisao < menor_valor_calculo_passo3:
                     menor_valor_calculo_passo3 = divisao
                     indice_saida_passo3 = i
+
         if modo_opcao == 2:
+            print('\nQual incógnita entra na base?')
+            print(f'Menor valor da matriz resultante do cálculo: {menor_valor_passo3}')
+            print(f'Incógnita que entrará na base: X{indice_entrada_passo3+1}')
+
+            print('\nMatriz proveniente da multiplicação de B_inversa com A:')
+            exibir_matriz(matriz_pivot_passo3)
+
+            print('\nColuna pivot do passo 3:')
+            exibir_matriz(coluna_pivot_passo3)
+
+            print('\nMatriz proveniente da multiplicação de B_inversa com b:')
+            exibir_matriz(matriz_lado_direito_passo3)
+            print('\nLado direito do passo 3:')
+            exibir_matriz(matriz_lado_direito_passo3)
+
             print('\nCálculo:')
             print(f'Menor valor do cálculo: {menor_valor_calculo_passo3}')
             print(f'Quem irá sair: S{indice_saida_passo3+1}')
@@ -369,6 +383,7 @@ def solucao_grafica(matriz_coeficientes_restricoes, matriz_termos_independentes_
                 ponto_y = matriz_termos_independentes_restricoes[i][0] / matriz_coeficientes_restricoes[i][1]
                 plt.axhline(y = ponto_y)
             plt.plot([solucao_metodo_simplex[0][0]], [solucao_metodo_simplex[1][0]], 'bo')
+
     plt.xlabel('X1')
     plt.ylabel('X2')
     plt.show()
