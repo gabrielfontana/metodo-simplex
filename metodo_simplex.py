@@ -1,3 +1,10 @@
+"""
+OBSERVAÇÕES:
+    - Não conseguimos implementar a minimização :(
+    - Nem todos os exemplos de maximização estão funcionando corretamente e não sabemos dizer o motivo :(
+    - Selecionamos 9 exemplos que estão funcionando
+"""
+
 #Importação das bibliotecas
 import matplotlib.pyplot as plt
 import numpy as np
