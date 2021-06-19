@@ -1,12 +1,15 @@
+#Importação das bibliotecas
 import matplotlib.pyplot as plt
 import numpy as np
 
+#Função para exibir uma matriz no formato tradicional
 def exibir_matriz(matriz):
     for i in range(len(matriz)):
         for j in range(len(matriz[0])):
             print(f'[{matriz[i][j]:^5}]', end='')
         print()
 
+#Função que restringe os caracteres que podem ser digitados pelo usuário
 def restringir_caracter(mensagem):
     invalido = True
     while invalido:
@@ -18,6 +21,7 @@ def restringir_caracter(mensagem):
             print('Informe um dígito válido!')
     return verificacao 
 
+#Função que gera a matriz dos coeficientes da função objetivo
 def matriz_coeficientes_funcao_objetivo(qtd_variaveis_decisao):
     coeficientes_funcao_objetivo = [[]]
     print()
@@ -25,12 +29,14 @@ def matriz_coeficientes_funcao_objetivo(qtd_variaveis_decisao):
         coeficientes_funcao_objetivo[0].append(float(restringir_caracter('Informe o coeficiente da váriavel de decisão X{0} na função objetivo: '.format(i+1))))
     return coeficientes_funcao_objetivo
 
+#Função que cria a matriz transposta das incógnitas
 def matriz_transposta_incognitas(qtd_variaveis_decisao):
     matriz_incognitas = []
     for i in range(qtd_variaveis_decisao):
         matriz_incognitas.append(['X{0}'.format(i+1)])
     return matriz_incognitas
 
+#Função que gera a matriz dos coeficientes das restrições
 def matriz_coeficientes_restricoes(qtd_restricoes, qtd_variaveis_decisao):
     matriz_coeficientes_restricoes = []
     for i in range(qtd_restricoes):
@@ -42,6 +48,7 @@ def matriz_coeficientes_restricoes(qtd_restricoes, qtd_variaveis_decisao):
         matriz_coeficientes_restricoes.append(linha)
     return matriz_coeficientes_restricoes
 
+#Função que cria a matriz dos termos independentes das restrições
 def matriz_termos_independentes_restricoes(qtd_restricoes):
     matriz_termos_independentes_restricoes = []
     for i in range(qtd_restricoes):
@@ -49,6 +56,7 @@ def matriz_termos_independentes_restricoes(qtd_restricoes):
         matriz_termos_independentes_restricoes.append([float(restringir_caracter('Informe o termo independente: '))])
     return matriz_termos_independentes_restricoes
 
+#Função que cria uma matriz identidade
 def matriz_identidade(ordem):
     matriz_identidade = []
     for i in range(ordem):
@@ -58,16 +66,20 @@ def matriz_identidade(ordem):
             matriz_identidade[i].append(result)
     return matriz_identidade
 
+#Função que concatena a matriz dos coeficientes das restrições com a matriz identidade
 def matriz_coeficientes_restricoes_identidade(matriz_coeficientes_restricoes, matriz_identidade):
     matriz1 = np.array(matriz_coeficientes_restricoes)
     matriz2 = np.array(matriz_identidade)
     matriz_coeficientes_restricoes_identidade = np.concatenate((matriz1, matriz2), axis=1)
     return matriz_coeficientes_restricoes_identidade
 
+#Função na qual o usuário pode escolher as maneiras de otimizar um problema (maximizar ou minimizar) e exibir os resultados (modo simplificado ou modo completo) 
 def menu():
+    #Inputs
     qtd_variaveis_decisao = int(restringir_caracter('Informe a quantidade de variáveis de decisão: '))
     qtd_restricoes = int(restringir_caracter('Informe a quantidade de restrições: '))
 
+    #Maneiras de exibir os resultados
     while True:
         print('\nOpções de cálculo: ')
         print('[1] - Modo Simplificado')
@@ -78,7 +90,8 @@ def menu():
             break
         else:
             print('\nInforme um modo válido!')
-    
+
+    #Maneiras de otimizar um problema
     while True:
         print('\nO que deseja realizar com a função objetivo?')
         print('[1] - Maximizar')
@@ -88,27 +101,37 @@ def menu():
         if funcao_objetivo_opcao == 1:
             break
         elif funcao_objetivo_opcao == 2:
-            print('Função a ser desenvolvida...')
+            print('\nFunção não implementada :(')
+            exit()
         else:
             print('\nInforme uma opção válida!')
     
+    #Chamando a função do Passo 1 do Método Simplex e passando os parâmetros
     primeiro_passo(qtd_variaveis_decisao, qtd_restricoes, modo_opcao, funcao_objetivo_opcao)
 
+#Passo 1 do Método Simplex
 def primeiro_passo(qtd_variaveis_decisao, qtd_restricoes, modo_opcao, funcao_objetivo_opcao):
     print('\nPASSO 1')
     
+    #Matriz dos coeficientes da função objetivo
     C = matriz_coeficientes_funcao_objetivo(qtd_variaveis_decisao)
 
+    #Matriz transposta das incógnitas
     X = matriz_transposta_incognitas(qtd_variaveis_decisao)
 
+    #Matriz dos coeficientes das restrições
     A = matriz_coeficientes_restricoes(qtd_restricoes, qtd_variaveis_decisao)
     
+    #Matriz dos termos independentes das restrições
     b = matriz_termos_independentes_restricoes(qtd_restricoes)
 
+    #Matriz identidade
     I = matriz_identidade(qtd_restricoes)
     
+    #Matriz dos coeficientes das restrições concatenada com a matriz identidade
     A_I = matriz_coeficientes_restricoes_identidade(A, I)
 
+    #Exibição das matrizes
     print('\nMatriz dos coeficientes da função objetivo (C):')
     exibir_matriz(C)
 
@@ -121,6 +144,7 @@ def primeiro_passo(qtd_variaveis_decisao, qtd_restricoes, modo_opcao, funcao_obj
     print('\nMatriz dos termos independentes das restrições (b):')
     exibir_matriz(b)
 
+    #Exibição específica (somente para o modo completo)
     if modo_opcao == 2:
         print('\nMatriz identidade (I):')
         exibir_matriz(I)
@@ -128,8 +152,10 @@ def primeiro_passo(qtd_variaveis_decisao, qtd_restricoes, modo_opcao, funcao_obj
         print('\nMatriz dos coeficientes das restrições (A) + Matriz identidade (I):')
         exibir_matriz(A_I)
 
+    #Chamando a função do Passo 2 do Método Simplex e passando os parâmetros
     segundo_passo(qtd_variaveis_decisao, qtd_restricoes, modo_opcao, funcao_objetivo_opcao, C, X, A, b, I, A_I)
 
+#Função que multiplica uma matriz por um número real
 def multiplicar_matriz_numero_real(numero_real, matriz):
     matriz_multiplicacao = []
     for i in range(len(matriz)):
@@ -139,25 +165,30 @@ def multiplicar_matriz_numero_real(numero_real, matriz):
             matriz_multiplicacao[i].append(multiplicacao)
     return matriz_multiplicacao
 
+#Função que cria a matriz das variáveis de base
 def matriz_variaveis_base(qtd_restricoes):
     matriz_variaveis_base = []
     for i in range(qtd_restricoes):
         matriz_variaveis_base.append(['S{0}'.format(i+1)])
     return matriz_variaveis_base
 
+#Função que cria uma matriz auxiliar (utilizada no momento da finalização do Método Simplex para exibir os valores encontrados para as incógnitas)
 def aux_matrix(qtd_restricoes):
     aux_matrix = []
     for i in range(qtd_restricoes):
         aux_matrix.append([qtd_restricoes+i])
     return aux_matrix
 
+#Função que multiplica os coeficientes da função objetivo por -1
 def matriz_coeficientes_negativos_funcao_objetivo(matriz_coeficientes_funcao_objetivo):
     matriz = multiplicar_matriz_numero_real(-1, matriz_coeficientes_funcao_objetivo)
     return matriz
 
+#Função que retorna uma determinada coluna de uma matriz
 def coluna(matriz, indice):
     return [row[indice] for row in matriz]
 
+#Função para gerar uma matriz transposta
 def matriz_transposta(matriz):
     matriz_transposta = []
     for j in range(len(matriz[0])):
@@ -167,6 +198,7 @@ def matriz_transposta(matriz):
             matriz_transposta[j].append(result)
     return matriz_transposta
 
+#Passo 2 do Método Simplex
 def segundo_passo(qtd_variaveis_decisao, qtd_restricoes, modo_opcao, funcao_objetivo_opcao, matriz_coeficientes_funcao_objetivo, matriz_transposta_incognitas, matriz_coeficientes_restricoes, matriz_termos_independentes_restricoes, matriz_identidade, matriz_coeficientes_restricoes_identidade):
 
     qtd_variaveis_decisao = qtd_variaveis_decisao
@@ -175,11 +207,19 @@ def segundo_passo(qtd_variaveis_decisao, qtd_restricoes, modo_opcao, funcao_obje
     A = matriz_coeficientes_restricoes
     b = matriz_termos_independentes_restricoes
 
+    #Matriz das variáveis de base
     XB = matriz_variaveis_base(qtd_restricoes)
+
+    #Matriz auxiliar
     matrix_aux = aux_matrix(qtd_restricoes)
+
+    #Matriz identidade
     B = matriz_identidade
+
+    #Coeficientes da função objetivo multiplicados por -1
     C_negativo = matriz_coeficientes_negativos_funcao_objetivo(matriz_coeficientes_funcao_objetivo)
 
+    #Exibição específica (somente para o modo completo)
     if modo_opcao == 2:
         print('\nPASSO 2')
 
@@ -192,6 +232,7 @@ def segundo_passo(qtd_variaveis_decisao, qtd_restricoes, modo_opcao, funcao_obje
         print('\nMatriz dos coeficientes negativos da função objetivo (-C):')
         exibir_matriz(C_negativo)
 
+    #Qual incógnita entra na base?
     menor_valor = 1000000000000
     indice_entrada = 0
     for i in range(len(C_negativo[0])):
@@ -199,11 +240,14 @@ def segundo_passo(qtd_variaveis_decisao, qtd_restricoes, modo_opcao, funcao_obje
             menor_valor = C_negativo[0][i]
             indice_entrada = i
     
+    #Coluna Pivot do Passo 2
     coluna_pivot = coluna(matriz_coeficientes_restricoes_identidade, indice_entrada)
     coluna_pivot = matriz_transposta([coluna_pivot])
 
+    #Lado Direito do Passo 2
     lado_direito = matriz_termos_independentes_restricoes
 
+    #Cálculo do Passo 2 (quem irá sair)
     menor_valor_calculo = 1000000000000
     indice_saida = 0
     for i in range(len(coluna_pivot)):
@@ -213,6 +257,7 @@ def segundo_passo(qtd_variaveis_decisao, qtd_restricoes, modo_opcao, funcao_obje
                 menor_valor_calculo = divisao
                 indice_saida = i
 
+    #Exibição específica (somente para o modo completo)
     if modo_opcao == 2:
         print('\nQual incógnita entra na base?')
         print(f'Menor valor da matriz dos coeficientes negativos da função objetivo: {menor_valor}')
@@ -229,10 +274,12 @@ def segundo_passo(qtd_variaveis_decisao, qtd_restricoes, modo_opcao, funcao_obje
         print(f'Menor valor do cálculo: {menor_valor_calculo}')
         print(f'Quem irá sair: S{indice_saida+1}')
 
+    #Gerar matriz dos coeficientes das novas variáveis de base
     matriz_coeficientes_novas_variaveis_base = [[]]
     for _ in range(qtd_restricoes):
         matriz_coeficientes_novas_variaveis_base[0].append(0)
 
+    #Chamando a função do Passo 3 do Método Simplex e passando os parâmetros
     terceiro_passo(qtd_variaveis_decisao, qtd_restricoes, modo_opcao, C, A, b, XB, matrix_aux, B, coluna_pivot, indice_entrada, indice_saida, matriz_coeficientes_novas_variaveis_base)
 
 def multiplicar_matrizes(matriz1, matriz2):
@@ -258,6 +305,7 @@ def subtrair_matrizes(matriz1, matriz2):
             matriz_subtracao[i].append(subtracao)
     return matriz_subtracao
 
+#Passo 3 do Método Simplex
 def terceiro_passo(qtd_variaveis_decisao, qtd_restricoes, modo_opcao, matriz_coeficientes_funcao_objetivo, matriz_coeficientes_restricoes, matriz_termos_independentes_restricoes, matriz_variaveis_base, aux_matrix, matriz_identidade, coluna_pivot, indice_entrada, indice_saida, matriz_coeficientes_novas_variaveis_base):
 
     C = matriz_coeficientes_funcao_objetivo
