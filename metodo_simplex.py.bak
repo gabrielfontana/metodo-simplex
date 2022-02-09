@@ -26,7 +26,7 @@ def restringir_caracter(mensagem):
             invalido = False
         except:
             print('Informe um dígito válido!')
-    return verificacao
+    return verificacao 
 
 #Função que gera a matriz dos coeficientes da função objetivo
 def matriz_coeficientes_funcao_objetivo(qtd_variaveis_decisao):
@@ -79,74 +79,6 @@ def matriz_coeficientes_restricoes_identidade(matriz_coeficientes_restricoes, ma
     matriz2 = np.array(matriz_identidade)
     matriz_coeficientes_restricoes_identidade = np.concatenate((matriz1, matriz2), axis=1)
     return matriz_coeficientes_restricoes_identidade
-
-#Função que multiplica uma matriz por um número real
-def multiplicar_matriz_numero_real(numero_real, matriz):
-    matriz_multiplicacao = []
-    for i in range(len(matriz)):
-        matriz_multiplicacao.append([])
-        for j in range(len(matriz[0])):
-            multiplicacao = numero_real * matriz[i][j] 
-            matriz_multiplicacao[i].append(multiplicacao)
-    return matriz_multiplicacao
-
-#Função que cria a matriz das variáveis de base
-def matriz_variaveis_base(qtd_restricoes):
-    matriz_variaveis_base = []
-    for i in range(qtd_restricoes):
-        matriz_variaveis_base.append(['S{0}'.format(i+1)])
-    return matriz_variaveis_base
-
-#Função que cria uma matriz auxiliar (utilizada no momento da finalização do Método Simplex para exibir os valores encontrados para as incógnitas)
-def aux_matrix(qtd_restricoes):
-    aux_matrix = []
-    for i in range(qtd_restricoes):
-        aux_matrix.append([qtd_restricoes+i])
-    return aux_matrix
-
-#Função que multiplica os coeficientes da função objetivo por -1
-def matriz_coeficientes_negativos_funcao_objetivo(matriz_coeficientes_funcao_objetivo):
-    matriz = multiplicar_matriz_numero_real(-1, matriz_coeficientes_funcao_objetivo)
-    return matriz
-
-#Função que retorna uma determinada coluna de uma matriz
-def coluna(matriz, indice):
-    return [row[indice] for row in matriz]
-
-#Função para gerar uma matriz transposta
-def matriz_transposta(matriz):
-    matriz_transposta = []
-    for j in range(len(matriz[0])):
-        matriz_transposta.append([])
-        for i in range(len(matriz)):
-            result = matriz[i][j]
-            matriz_transposta[j].append(result)
-    return matriz_transposta
-
-#Função para multiplicar duas matrizes
-def multiplicar_matrizes(matriz1, matriz2):
-    if len(matriz1[0]) != len(matriz2):
-        print('\nDimensões incorretas. O número de colunas da matriz A precisa ser igual ao número de linhas da matriz B')
-        return
-    else:
-        matrizes_multiplicacao = [] #Cria a matriz
-        for i in range(len(matriz1)):
-            matrizes_multiplicacao.append([]) #Adiciona uma linha
-            for j in range(len(matriz2[0])):
-                matrizes_multiplicacao[i].append(0) #Preenche a linha com o elemento 0
-                for k in range(len(matriz1[0])):
-                    matrizes_multiplicacao[i][j] += matriz1[i][k] * matriz2[k][j]
-        return matrizes_multiplicacao
-
-#Função para subtrair duas matrizes
-def subtrair_matrizes(matriz1, matriz2):
-    matriz_subtracao = []
-    for i in range(len(matriz1)):
-        matriz_subtracao.append([])
-        for j in range(len(matriz1[0])):
-            subtracao = matriz1[i][j] - matriz2[i][j]
-            matriz_subtracao[i].append(subtracao)
-    return matriz_subtracao
 
 #Função na qual o usuário pode escolher as maneiras de otimizar um problema (maximizar ou minimizar) e exibir os resultados (modo simplificado ou modo completo) 
 def menu():
@@ -229,6 +161,49 @@ def primeiro_passo(qtd_variaveis_decisao, qtd_restricoes, modo_opcao, funcao_obj
 
     #Chamando a função do Passo 2 do Método Simplex e passando os parâmetros
     segundo_passo(qtd_variaveis_decisao, qtd_restricoes, modo_opcao, funcao_objetivo_opcao, C, X, A, b, I, A_I)
+
+#Função que multiplica uma matriz por um número real
+def multiplicar_matriz_numero_real(numero_real, matriz):
+    matriz_multiplicacao = []
+    for i in range(len(matriz)):
+        matriz_multiplicacao.append([])
+        for j in range(len(matriz[0])):
+            multiplicacao = numero_real * matriz[i][j] 
+            matriz_multiplicacao[i].append(multiplicacao)
+    return matriz_multiplicacao
+
+#Função que cria a matriz das variáveis de base
+def matriz_variaveis_base(qtd_restricoes):
+    matriz_variaveis_base = []
+    for i in range(qtd_restricoes):
+        matriz_variaveis_base.append(['S{0}'.format(i+1)])
+    return matriz_variaveis_base
+
+#Função que cria uma matriz auxiliar (utilizada no momento da finalização do Método Simplex para exibir os valores encontrados para as incógnitas)
+def aux_matrix(qtd_restricoes):
+    aux_matrix = []
+    for i in range(qtd_restricoes):
+        aux_matrix.append([qtd_restricoes+i])
+    return aux_matrix
+
+#Função que multiplica os coeficientes da função objetivo por -1
+def matriz_coeficientes_negativos_funcao_objetivo(matriz_coeficientes_funcao_objetivo):
+    matriz = multiplicar_matriz_numero_real(-1, matriz_coeficientes_funcao_objetivo)
+    return matriz
+
+#Função que retorna uma determinada coluna de uma matriz
+def coluna(matriz, indice):
+    return [row[indice] for row in matriz]
+
+#Função para gerar uma matriz transposta
+def matriz_transposta(matriz):
+    matriz_transposta = []
+    for j in range(len(matriz[0])):
+        matriz_transposta.append([])
+        for i in range(len(matriz)):
+            result = matriz[i][j]
+            matriz_transposta[j].append(result)
+    return matriz_transposta
 
 #Passo 2 do Método Simplex
 def segundo_passo(qtd_variaveis_decisao, qtd_restricoes, modo_opcao, funcao_objetivo_opcao, matriz_coeficientes_funcao_objetivo, matriz_transposta_incognitas, matriz_coeficientes_restricoes, matriz_termos_independentes_restricoes, matriz_identidade, matriz_coeficientes_restricoes_identidade):
@@ -314,6 +289,31 @@ def segundo_passo(qtd_variaveis_decisao, qtd_restricoes, modo_opcao, funcao_obje
 
     #Chamando a função do Passo 3 do Método Simplex e passando os parâmetros
     terceiro_passo(qtd_variaveis_decisao, qtd_restricoes, modo_opcao, C, A, b, XB, matrix_aux, B, coluna_pivot, indice_entrada, indice_saida, matriz_coeficientes_novas_variaveis_base)
+
+#Função para multiplicar duas matrizes
+def multiplicar_matrizes(matriz1, matriz2):
+    if len(matriz1[0]) != len(matriz2):
+        print('\nDimensões incorretas. O número de colunas da matriz A precisa ser igual ao número de linhas da matriz B')
+        return
+    else:
+        matrizes_multiplicacao = [] #Cria a matriz
+        for i in range(len(matriz1)):
+            matrizes_multiplicacao.append([]) #Adiciona uma linha
+            for j in range(len(matriz2[0])):
+                matrizes_multiplicacao[i].append(0) #Preenche a linha com o elemento 0
+                for k in range(len(matriz1[0])):
+                    matrizes_multiplicacao[i][j] += matriz1[i][k] * matriz2[k][j]
+        return matrizes_multiplicacao
+
+#Função para subtrair duas matrizes
+def subtrair_matrizes(matriz1, matriz2):
+    matriz_subtracao = []
+    for i in range(len(matriz1)):
+        matriz_subtracao.append([])
+        for j in range(len(matriz1[0])):
+            subtracao = matriz1[i][j] - matriz2[i][j]
+            matriz_subtracao[i].append(subtracao)
+    return matriz_subtracao
 
 #Passo 3 do Método Simplex
 def terceiro_passo(qtd_variaveis_decisao, qtd_restricoes, modo_opcao, matriz_coeficientes_funcao_objetivo, matriz_coeficientes_restricoes, matriz_termos_independentes_restricoes, matriz_variaveis_base, aux_matrix, matriz_identidade, coluna_pivot, indice_entrada, indice_saida, matriz_coeficientes_novas_variaveis_base):
